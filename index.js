@@ -13,9 +13,8 @@ var levels = {
   60: 'fatal'
 };
 
-function generateIndexName (entry) {
-  var datestamp = moment(entry.timestamp).format('YYYY.MM.DD');
-  return 'logstash-'+datestamp;
+function generateIndexName (pattern, entry) {
+  return moment.utc(entry.timestamp).format(pattern);
 }
 
 function callOrString (value, entry) {
@@ -26,19 +25,21 @@ function callOrString (value, entry) {
 }
 
 function ElasticsearchStream (options) {
-  this.client = new elasticsearch.Client(options);
-  this.type = options.type || 'logs';
-  this.index = options.index || generateIndexName; 
+  options = options || {};
+  this._client = options.client || new elasticsearch.Client(options);
+  this._type = options.type || 'logs';
+  var indexPattern = options.indexPattern || '[logstash-]YYYY.MM.DD';
+  this._index = options.index || generateIndexName.bind(null, indexPattern); 
   Writable.call(this, options);
 }
 
-util.inherits(KibanaStream, Writable);
+util.inherits(ElasticsearchStream, Writable);
 
-KibanaStream.prototype._write = function (entry, encoding, callback) {
+ElasticsearchStream.prototype._write = function (entry, encoding, callback) {
 
-  var client = this.client;
-  var index = this.index;
-  var type = this.type;
+  var client = this._client;
+  var index = this._index;
+  var type = this._type;
 
   var d = domain.create();
   d.on('error', function (err) { 
@@ -63,10 +64,13 @@ KibanaStream.prototype._write = function (entry, encoding, callback) {
     var options = {
       index: callOrString(index, entry),
       type: callOrString(type, entry),
-      body: entry;
+      body: entry
     };
 
-    client.create(options, callback);
+    client.create(options, function (err, resp) {
+      if (err) console.log('Elasticsearch Stream Error:', err.stack);
+      callback();
+    });
 
   });
 };
