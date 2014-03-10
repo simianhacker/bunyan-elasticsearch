@@ -1,6 +1,6 @@
 {
   "name": "bunyan-elasticsearch",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A Bunyan stream for sending log data to Elasticsearch",
   "main": "index.js",
   "scripts": {
