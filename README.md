@@ -21,7 +21,7 @@ curl -XPUT localhost:9200/_template/logstash -d @template.json
 
 ```
 var bunyan = require('bunyan');
-var elasticsearch = require('bunyan-elasticsearch');
+var Elasticsearch = require('bunyan-elasticsearch');
 var esStream = new Elasticsearch({
   indexPattern: '[logstash-]YYYY.MM.DD',
   type: 'logs',
