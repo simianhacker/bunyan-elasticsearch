@@ -23,7 +23,7 @@
   "homepage": "https://github.com/ccowan/bunyan-elasticsearch",
   "dependencies": {
     "moment": "~2.5.1",
-    "elasticsearch": "~1.5.8"
+    "elasticsearch": "~4.1.0"
   },
   "devDependencies": {
     "mocha": "~1.17.1"
