@@ -1,6 +1,6 @@
 {
   "name": "bunyan-elasticsearch",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A Bunyan stream for sending log data to Elasticsearch",
   "main": "index.js",
   "scripts": {
@@ -22,10 +22,10 @@
   },
   "homepage": "https://github.com/ccowan/bunyan-elasticsearch",
   "dependencies": {
-    "moment": "~2.5.1",
-    "elasticsearch": "~1.5.8"
+    "moment": "^2.10.6",
+    "elasticsearch": "^6.0.0"
   },
   "devDependencies": {
-    "mocha": "~1.17.1"
+    "mocha": "^2.2.5"
   }
 }
