@@ -42,36 +42,33 @@ ElasticsearchStream.prototype._write = function (entry, encoding, callback) {
   var type = this._type;
 
   var d = domain.create();
-  d.on('error', function (err) { 
-    console.log("Elasticsearch Error", err.stack);
-  });
-  d.run(function () {
-    entry = JSON.parse(entry.toString('utf8'));
-    var env = process.env.NODE_ENV || 'development';
+  entry = JSON.parse(entry.toString('utf8'));
+  var env = process.env.NODE_ENV || 'development';
 
-    // Reassign these fields so them match what the default Kibana dashboard 
-    // expects to see.
-    entry['@timestamp'] = entry.time;
-    entry.level = levels[entry.level];
-    entry.message = entry.msg;
+  // Reassign these fields so them match what the default Kibana dashboard 
+  // expects to see.
+  entry['@timestamp'] = entry.time;
+  entry.level = levels[entry.level];
+  entry.message = entry.msg;
 
-    // remove duplicate fields
-    delete entry.time;
-    delete entry.msg;
+  // remove duplicate fields
+  delete entry.time;
+  delete entry.msg;
 
-    var datestamp = moment(entry.timestamp).format('YYYY.MM.DD');
+  var datestamp = moment(entry.timestamp).format('YYYY.MM.DD');
 
-    var options = {
-      index: callOrString(index, entry),
-      type: callOrString(type, entry),
-      body: entry
-    };
+  var options = {
+    index: callOrString(index, entry),
+    type: callOrString(type, entry),
+    body: entry
+  };
 
-    client.create(options, function (err, resp) {
-      if (err) console.log('Elasticsearch Stream Error:', err.stack);
-      callback();
-    });
-
+  var self = this;
+  client.create(options, function (err, resp) {
+    if (err) {
+      self.emit('error', err);
+    }
+    callback();
   });
 };
 
