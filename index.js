@@ -1,5 +1,4 @@
 var Writable = require('stream').Writable;
-var domain = require('domain');
 var util = require('util');
 var elasticsearch = require('elasticsearch');
 var moment = require('moment');
@@ -29,7 +28,7 @@ function ElasticsearchStream (options) {
   this._client = options.client || new elasticsearch.Client(options);
   this._type = options.type || 'logs';
   var indexPattern = options.indexPattern || '[logstash-]YYYY.MM.DD';
-  this._index = options.index || generateIndexName.bind(null, indexPattern); 
+  this._index = options.index || generateIndexName.bind(null, indexPattern);
   Writable.call(this, options);
 }
 
@@ -41,9 +40,7 @@ ElasticsearchStream.prototype._write = function (entry, encoding, callback) {
   var index = this._index;
   var type = this._type;
 
-  var d = domain.create();
   entry = JSON.parse(entry.toString('utf8'));
-  var env = process.env.NODE_ENV || 'development';
 
   // Reassign these fields so them match what the default Kibana dashboard 
   // expects to see.
