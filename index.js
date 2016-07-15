@@ -2,6 +2,7 @@ var Writable = require('stream').Writable;
 var util = require('util');
 var elasticsearch = require('elasticsearch');
 var moment = require('moment');
+var defaultTemplate = require('./template.json');
 
 var levels = {
   10: 'trace',
@@ -23,6 +24,7 @@ function callOrString(value, entry) {
   return value;
 }
 
+
 function ElasticsearchStream(options) {
   options = options || {};
   this._client = options.client || new elasticsearch.Client(options);
@@ -30,10 +32,29 @@ function ElasticsearchStream(options) {
   var indexPattern = options.indexPattern || '[logstash-]YYYY.MM.DD';
   this._index = options.index || generateIndexName.bind(null, indexPattern);
   this._writeCallback = options.write || undefined;
+  this._template = options.template || defaultTemplate;
+
+  // async
+  this.initTemplate(this._index, this._template);
+
   Writable.call(this, options);
 }
 
 util.inherits(ElasticsearchStream, Writable);
+
+
+ElasticsearchStream.prototype.initTemplate = function (name, template) {
+  if (template === false)
+    return;
+
+  template.template = name + '*';
+
+  return this._client.indices.putTemplate({
+    name: 'template-' + name,
+    create: false, // can be replace a previous one
+    body: template
+  });
+};
 
 ElasticsearchStream.prototype._write = function (entry, encoding, callback) {
 
@@ -42,31 +63,37 @@ ElasticsearchStream.prototype._write = function (entry, encoding, callback) {
   var type = this._type;
 
   entry = JSON.parse(entry.toString('utf8'));
+  var env = process.env.NODE_ENV || cst.DEV_ENV;
 
   // Reassign these fields so them match what the default Kibana dashboard
   // expects to see.
-  entry['@timestamp'] = entry.time;
-  entry.level = levels[entry.level];
-  entry.message = entry.msg;
+  var output = {
+    // The _timestamp field is deprecated. Instead, use a normal date field and set its value explicitly.
+    'date': entry.time,
+    'level_int': entry.level,
+    'level': levels[entry.level],
+    'message': entry.msg,
+    'node_env': env,
+    'datestamp': moment(entry.time).format('YYYY.MM.DD')
+  };
 
-  // remove duplicate fields
-  delete entry.time;
-  delete entry.msg;
-
-  entry.datestamp = moment(entry.timestamp).format('YYYY.MM.DD');
+  if (entry.err) {
+    output.error = entry.err;
+    if (!output.message) output.message = output.error.message;
+  }
 
   if (this._writeCallback) {
-    this._writeCallback(entry);
+    this._writeCallback(output);
   }
 
   var options = {
     index: callOrString(index, entry),
     type: callOrString(type, entry),
-    body: entry
+    body: output
   };
 
   var self = this;
-  client.create(options, function (err, resp) {
+  client.create(options, function (err) {
     if (err) {
       self.emit('error', err);
     }
