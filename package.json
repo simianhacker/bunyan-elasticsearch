@@ -4,7 +4,7 @@
   "description": "A Bunyan stream for sending log data to Elasticsearch with custom entry function",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "./node_modules/.bin/mocha --check-leaks ./tests/**.js"
   },
   "repository": {
     "type": "git",
@@ -23,10 +23,12 @@
   },
   "homepage": "https://github.com/bloublou2014/bunyan-stream-elasticsearch",
   "dependencies": {
-    "moment": "^2.11.1",
-    "elasticsearch": "^10.1.2"
+    "elasticsearch": "^11.0.1",
+    "moment": "^2.14.1"
   },
   "devDependencies": {
-    "mocha": "^2.3.4"
+    "mocha": "^2.5.3",
+    "require-new": "^1.1.0",
+    "should": "^9.0.2"
   }
 }
