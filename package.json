@@ -1,26 +1,27 @@
 {
-  "name": "bunyan-elasticsearch",
-  "version": "1.0.0",
-  "description": "A Bunyan stream for sending log data to Elasticsearch",
+  "name": "bunyan-stream-elasticsearch",
+  "version": "0.5.0",
+  "description": "A Bunyan stream for sending log data to Elasticsearch with custom entry function",
   "main": "index.js",
   "scripts": {
     "test": "mocha"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/ccowan/bunyan-elasticsearch.git"
+    "url": "git://github.com/bloublou2014/bunyan-stream-elasticsearch.git"
   },
   "keywords": [
     "Bunyan",
     "Logstash",
+    "Stream",
     "Elasticsearch"
   ],
-  "author": "ccowan",
+  "author": "bloublou2014",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ccowan/bunyan-elasticsearch/issues"
+    "url": "https://github.com/bloublou2014/bunyan-stream-elasticsearch/issues"
   },
-  "homepage": "https://github.com/ccowan/bunyan-elasticsearch",
+  "homepage": "https://github.com/bloublou2014/bunyan-stream-elasticsearch",
   "dependencies": {
     "moment": "^2.11.1",
     "elasticsearch": "^10.1.2"
