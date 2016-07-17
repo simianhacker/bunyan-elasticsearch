@@ -16,8 +16,9 @@ npm install bunyan-stream-elasticsearch
 
 ## Logstash Template
 
-By default bunyan-stream-elasticsearch will create an index with a specific mapping template for your indexPattern.
-You can disabled it via option `template:false` or overwrite it via `template:{es template}`
+By default bunyan-stream-elasticsearch will create an index with a specific mapping template for your indexPattern. Template name will be 'template-logstash-' with default settings.
+If your index pattern is for example '[test-]YYYY.MM.DD[-pattern]', template name will be 'template-test--pattern'. Each time node app is starting, template is overwrite.
+You can disabled it via option `template:false` or overwrite it via `template:{es template}`.
 
 ## Custom Write function
 
@@ -71,6 +72,6 @@ logger.info('Starting application on port %d', app.get('port'));
 * `indexPattern` {string}: Used to generate index if `index` option not set. Default: `'[logstash-]YYYY.MM.DD'`
 * `index` {string|function}: Elasticsearch index. Defaults to index generated using index pattern
 * `template` {json|boolean}: Elasticsearch Template to push to elasticseach at each start. if `false` no template will be pushed, if `{...}` will act as template remplacement.
-* `write` {function} : Custom write callback to modify entry before pushing it to Elasticsearch. 
+* `writeCallback` {function} : Custom write callback to modify entry before pushing it to Elasticsearch. 
 
 Options `type` and `index` can be either a string or function. For these options, when the option is set to a function, the function is passed the log entry object as an argument
