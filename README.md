@@ -40,7 +40,7 @@ var esStream = new bunyanStreamElasticsearch({
   type: 'logs',
   host: 'localhost:9200',
   defaultTemplate:true,
-  write : writeEntryCallback
+  writeCallback : writeEntryCallback
 });
 
 // manage error case

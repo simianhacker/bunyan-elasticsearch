@@ -1,7 +1,6 @@
 'use-strict';
 
-var requireNew = require('require-new'),
-  should = require('should'),
+var should = require('should'),
   helper = require('./helper');
 
 describe('Connection', function () {

@@ -24,6 +24,7 @@
   "homepage": "https://github.com/bloublou2014/bunyan-stream-elasticsearch",
   "dependencies": {
     "elasticsearch": "^11.0.1",
+    "lodash": "^4.13.1",
     "moment": "^2.14.1"
   },
   "devDependencies": {

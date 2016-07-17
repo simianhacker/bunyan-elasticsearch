@@ -3,6 +3,7 @@ var util = require('util');
 var elasticsearch = require('elasticsearch');
 var moment = require('moment');
 var defaultTemplate = require('./template.json');
+var _ = require('lodash');
 
 var levels = {
   10: 'trace',
@@ -25,17 +26,38 @@ function callOrString(value, entry) {
 }
 
 
+function generateRawTemplateName(pattern) {
+  // get only part between []
+  var re = /(\[([^\]]+)])/g;
+  var match;
+  var names = [];
+
+  while (match = re.exec(pattern)) {
+    names.push(match[2]);
+  }
+
+  if (names.length < 1) {
+    names = [pattern];
+  }
+
+  return {
+    template: names[0] + '*',
+    name: 'template-' + names.join('-')
+  };
+}
+
+
 function ElasticsearchStream(options) {
   options = options || {};
   this._client = options.client || new elasticsearch.Client(options);
   this._type = options.type || 'logs';
   var indexPattern = options.indexPattern || '[logstash-]YYYY.MM.DD';
   this._index = options.index || generateIndexName.bind(null, indexPattern);
-  this._writeCallback = options.write || undefined;
+  this._writeCallback = options.writeCallback || undefined;
   this._template = options.template || defaultTemplate;
 
   // async
-  this.initTemplate(this._index, this._template);
+  this.initTemplate(options.index || indexPattern, this._template);
 
   Writable.call(this, options);
 }
@@ -47,10 +69,12 @@ ElasticsearchStream.prototype.initTemplate = function (name, template) {
   if (template === false)
     return;
 
-  template.template = name + '*';
+  var tpl = generateRawTemplateName(name);
+
+  template.template = tpl.template;
 
   return this._client.indices.putTemplate({
-    name: 'template-' + name,
+    name: tpl.name,
     create: false, // can be replace a previous one
     body: template
   });
@@ -62,28 +86,34 @@ ElasticsearchStream.prototype._write = function (entry, encoding, callback) {
   var index = this._index;
   var type = this._type;
 
-  entry = JSON.parse(entry.toString('utf8'));
-  var env = process.env.NODE_ENV || cst.DEV_ENV;
+  var input = JSON.parse(entry.toString('utf8'));
 
   // Reassign these fields so them match what the default Kibana dashboard
   // expects to see.
   var output = {
     // The _timestamp field is deprecated. Instead, use a normal date field and set its value explicitly.
-    'date': entry.time,
-    'level_int': entry.level,
-    'level': levels[entry.level],
-    'message': entry.msg,
-    'node_env': env,
-    'datestamp': moment(entry.time).format('YYYY.MM.DD')
+    'date': input.time,
+    'level_int': input.level,
+    'level': levels[input.level],
+    'message': input.msg,
+    'datestamp': moment(input.time).format('YYYY.MM.DD'),
   };
 
-  if (entry.err) {
-    output.error = entry.err;
+  // merge
+  output = _.defaults(output, input);
+
+  delete output.msg;
+  delete output.v;
+  delete output.time;
+
+
+  if (input.err) {
+    output.error = input.err;
     if (!output.message) output.message = output.error.message;
   }
 
   if (this._writeCallback) {
-    this._writeCallback(output);
+    this._writeCallback(output, input);
   }
 
   var options = {
@@ -93,7 +123,7 @@ ElasticsearchStream.prototype._write = function (entry, encoding, callback) {
   };
 
   var self = this;
-  client.create(options, function (err) {
+  client.index(options, function (err) {
     if (err) {
       self.emit('error', err);
     }
