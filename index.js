@@ -61,7 +61,7 @@ ElasticsearchStream.prototype._write = function (entry, encoding, callback) {
   };
 
   var self = this;
-  client.create(options, function (err, resp) {
+  client.index(options, function (err, resp) {
     if (err) {
       self.emit('error', err);
     }
