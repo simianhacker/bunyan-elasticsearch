@@ -1,12 +1,12 @@
 'use-strict';
 
-var should = require('should'),
+let should = require('should'),
   helper = require('./helper');
 
 describe('Connection', function () {
 
-  var options = {};
-  var app;
+  let options = {};
+  let app;
 
   before(function (done) {
     this.timeout(10000);

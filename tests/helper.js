@@ -1,23 +1,23 @@
 /**
  * Index helper
  */
-var Promise = require('bluebird'),
+const Promise = require('bluebird'),
   _ = require('lodash'),
   should = require('should'),
   elasticsearch = require('elasticsearch'),
   requireNew = require('require-new'),
   bses = requireNew('../index.js');
 
-var helper = function () {
-  var module = {};
+let helper = function () {
+  let module = {};
 
   // avoid test collision by using a different index name
   // in case a test fails, next test will not use same index
-  var testIndex = 0;
+  let testIndex = 0;
 
-  var testIndexName = 'bunyan-stream-es-test';
+  let testIndexName = 'bunyan-stream-es-test';
 
-  var testOptions = {
+  let testOptions = {
     // fastest index creation for elasticsearch
     settings: {
       index: {
@@ -27,16 +27,16 @@ var helper = function () {
     }
   };
 
-  var testIndexOptions = {
+  let testIndexOptions = {
     index: testIndexName,
     options: testOptions
     // ,trace: true // Trace only for dev
   };
 
   // default Elasticsearch client
-  var client = new elasticsearch.Client();
+  let client = new elasticsearch.Client();
 
-  var latestIndex;
+  let latestIndex;
 
   module.generateIndexName = function () {
     latestIndex = testIndexName + '_' + (testIndex++);
@@ -100,7 +100,7 @@ var helper = function () {
 
   module.getMapping = function (app, typeName) {
     return new Promise(function (success, error) {
-      var esType = typeName.toLowerCase() + 's';
+      let esType = typeName.toLowerCase() + 's';
       app.client.indices.getMapping({
           index: latestIndex,
           type: esType
@@ -165,7 +165,7 @@ var helper = function () {
 
   module.deleteIndex = function (indexName, errIfFail) {
     return new Promise(function (success, error) {
-      var client = new elasticsearch.Client();
+      let client = new elasticsearch.Client();
       client.indices.delete({
           index: indexName || latestIndex
         },
@@ -183,7 +183,7 @@ var helper = function () {
 
   module.deleteTemplate = function (templateName, errIfFail) {
     return new Promise(function (success, error) {
-      var client = new elasticsearch.Client();
+      let client = new elasticsearch.Client();
       client.indices.deleteTemplate({
           name: templateName || latestIndex
         },

@@ -29,15 +29,15 @@ This allow a fine tuning on how document will be defined. Do not forget to overr
 ## Example
 
 ```
-var bunyan = require('bunyan');
-var bunyanStreamElasticsearch = require('bunyan-elasticsearch');
+let bunyan = require('bunyan');
+let bunyanStreamElasticsearch = require('bunyan-elasticsearch');
 
-var writeEntryCallback = function(entry) {
+let writeEntryCallback = function(entry) {
    // modify entry values
    entry.myProperty = 'my value';
 };
 
-var esStream = new bunyanStreamElasticsearch({
+let esStream = new bunyanStreamElasticsearch({
   indexPattern: '[logstash-]YYYY.MM.DD',
   type: 'logs',
   host: 'localhost:9200',
@@ -51,7 +51,7 @@ esStream.on('error', function (err) {
 });
 
 // Create the logger itself
-var logger = bunyan.createLogger({
+let logger = bunyan.createLogger({
   name: "My Application",
   streams: [
     // default stream to console
