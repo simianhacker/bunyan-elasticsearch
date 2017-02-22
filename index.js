@@ -61,11 +61,21 @@ ElasticsearchStream.prototype._write = function (entry, encoding, callback) {
   };
 
   var self = this;
-  client.index(options, function (err, resp) {
-    if (err) {
-      self.emit('error', err);
+
+  client.ping({
+    requestTimeout: Infinity,
+    hello: 'elasticsearch!'
+  }, function (error) {
+    if (error) {
+      console.trace('elasticsearch cluster is down!');
+    } else {
+      client.index(options, function (err, resp) {
+        if (err) {
+          self.emit('error', err);
+        }
+        callback();
+      });
     }
-    callback();
   });
 };
 
