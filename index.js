@@ -67,7 +67,7 @@ ElasticsearchStream.prototype._write = function (entry, encoding, callback) {
     hello: 'elasticsearch!'
   }, function (error) {
     if (error) {
-      console.trace('elasticsearch cluster is down!');
+      console.error('elasticsearch cluster is down!');
     } else {
       client.index(options, function (err, resp) {
         if (err) {
