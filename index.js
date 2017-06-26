@@ -64,7 +64,6 @@ ElasticsearchStream.prototype._write = function (entry, encoding, callback) {
 
   client.ping({
     requestTimeout: Infinity,
-    hello: 'elasticsearch!'
   }, function (error) {
     if (error) {
       console.error('elasticsearch cluster is down!');
