@@ -29,6 +29,7 @@ function ElasticsearchStream (options) {
   this._type = options.type || 'logs';
   var indexPattern = options.indexPattern || '[logstash-]YYYY.MM.DD';
   this._index = options.index || generateIndexName.bind(null, indexPattern);
+  this._pipeline = options.pipeline || null;
   Writable.call(this, options);
 }
 
@@ -57,7 +58,8 @@ ElasticsearchStream.prototype._write = function (entry, encoding, callback) {
   var options = {
     index: callOrString(index, entry),
     type: callOrString(type, entry),
-    body: entry
+    body: entry,
+    pipeline: this._pipeline
   };
 
   var self = this;
