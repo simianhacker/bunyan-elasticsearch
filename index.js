@@ -55,7 +55,6 @@ ElasticsearchStream.prototype._write = function (entry, encoding, callback) {
 
   var datestamp = moment(entry.timestamp).format('YYYY.MM.DD');
 
-  console.log('pipeline', this._pipeline);
   var options = {
     index: callOrString(index, entry),
     type: callOrString(type, entry),
