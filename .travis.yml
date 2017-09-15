@@ -13,6 +13,8 @@ env: TARGET=test
 
 node_js:
   - 'node'
+  - '8'
+  - '7'
   - '6'
   - '5'
   - '4'

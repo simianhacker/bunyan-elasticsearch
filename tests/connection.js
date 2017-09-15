@@ -1,4 +1,4 @@
-'use-strict';
+'use strict';
 
 let should = require('should'),
   helper = require('./helper');
