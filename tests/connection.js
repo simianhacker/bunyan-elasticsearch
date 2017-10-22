@@ -1,11 +1,11 @@
 'use strict';
 
-let should = require('should'),
+const should = require('should'),
   helper = require('./helper');
 
 describe('Connection', function () {
 
-  let options = {};
+  const options = {};
   let app;
 
   before(function (done) {

@@ -1,6 +1,6 @@
 {
   "name": "bunyan-stream-elasticsearch",
-  "version": "0.7.0",
+  "version": "1.0.0",
   "description": "A Bunyan stream for sending log data to Elasticsearch with custom entry function",
   "main": "index.js",
   "scripts": {
@@ -20,6 +20,9 @@
     "Elasticsearch"
   ],
   "author": "bloublou2014",
+  "contributors": [
+    "BendingBender(https://github.com/BendingBender)"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/bloublou2014/bunyan-stream-elasticsearch/issues"
@@ -28,13 +31,13 @@
   "dependencies": {
     "elasticsearch": "^13.3.1",
     "lodash": "^4.17.4",
-    "moment": "^2.17.1"
+    "moment": "^2.19.1"
   },
   "devDependencies": {
-    "bluebird": "^3.4.7",
+    "bluebird": "^3.5.1",
     "lodash": "^4.17.4",
     "mocha": "^3.2.0",
     "require-new": "^1.1.1",
-    "should": "^13.0.1"
+    "should": "^13.1.2"
   }
 }

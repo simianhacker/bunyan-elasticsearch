@@ -56,7 +56,7 @@ class ElasticsearchStream extends Writable {
     let indexPattern = options.indexPattern || '[logstash-]YYYY.MM.DD';
     this._index = options.index || generateIndexName.bind(null, indexPattern);
     this._writeCallback = options.writeCallback;
-    this._template = options.template == null || options.template === true ? defaultTemplate : options.template;
+    this._template = !options.template || options.template === true ? defaultTemplate : options.template;
 
     // async
     this.initTemplate(options.index || indexPattern, this._template);

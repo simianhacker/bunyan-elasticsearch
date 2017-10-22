@@ -83,7 +83,7 @@ let helper = function () {
               name: 'template-' + options.index
             },
             function (err, response, status) {
-              if (err && err.displayName != 'NotFound') {
+              if (err && err.displayName !== 'NotFound') {
                 error(err);
               } else {
                 success();
